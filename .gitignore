@@ -1,0 +1,5 @@
+node_modules/
+blocks.db
+blocks.db-journal
+.env
+*.log

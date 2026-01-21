@@ -160,9 +160,15 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// Export for Vercel (though WebSockets won't work on Vercel)
+module.exports = app;
+
+// Only start server if not in serverless environment
+if (process.env.VERCEL !== '1') {
+    server.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {

@@ -137,8 +137,9 @@ io.on('connection', (socket) => {
         // Update database
         saveBlockPosition(id, x, y);
         
-        // Broadcast to all other clients
-        socket.broadcast.emit('block-moved', { id, x, y });
+        // Broadcast to ALL clients (including sender) for real-time sync
+        // Clients will ignore updates for blocks they're currently dragging
+        io.emit('block-moved', { id, x, y });
     });
     
     // Handle block creation

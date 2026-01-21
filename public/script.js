@@ -47,7 +47,13 @@ socket.on('block-moved', (data) => {
     }
     
     const block = document.getElementById(`block-${data.id}`);
-    if (!block) return;
+    if (!block) {
+        console.warn('Block not found:', data.id);
+        return;
+    }
+    
+    // Debug: log updates being received
+    // console.log('Received update:', data.id, data.x, data.y);
     
     // If there's an active animation for this block, stop it
     if (activeAnimations[data.id]) {
@@ -140,6 +146,8 @@ function startDrag(e) {
                 x: blocks[currentBlockId].x,
                 y: blocks[currentBlockId].y
             });
+            // Debug: log updates being sent
+            // console.log('Sending update:', currentBlockId, blocks[currentBlockId].x, blocks[currentBlockId].y);
         }
     }, UPDATE_RATE);
     

@@ -13,6 +13,7 @@ let lastX = 0;
 let lastY = 0;
 let lastTime = 0;
 let updateInterval = null;
+let dragUpdateInterval = null; // Separate interval for drag updates
 let activeAnimations = {}; // Track active animations per block
 
 // Physics constants
@@ -128,6 +129,20 @@ function startDrag(e) {
     velocityX = 0;
     velocityY = 0;
     
+    // Start interval to send position updates during dragging
+    if (dragUpdateInterval) {
+        clearInterval(dragUpdateInterval);
+    }
+    dragUpdateInterval = setInterval(() => {
+        if (blocks[currentBlockId]) {
+            socket.emit('move-block', {
+                id: currentBlockId,
+                x: blocks[currentBlockId].x,
+                y: blocks[currentBlockId].y
+            });
+        }
+    }, UPDATE_RATE);
+    
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', stopDrag);
     
@@ -197,6 +212,12 @@ function stopDrag(e) {
                 y: blocks[currentBlockId].y
             });
         }
+    }
+    
+    // Clear drag update interval
+    if (dragUpdateInterval) {
+        clearInterval(dragUpdateInterval);
+        dragUpdateInterval = null;
     }
     
     currentBlockId = null;
